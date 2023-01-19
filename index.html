@@ -16,7 +16,10 @@
     <link rel="stylesheet" href="style.css">
     
 </head>
-<body>
+
+<body onload="connectWallet()">
+      
+
     <nav class="navbar bg-body-tertiary">
         <div class="container-fluid justify-content-between" >
           <a class="navbar-brand" href="">
@@ -35,17 +38,27 @@
    
     <div1 class ="div1">
         </br>
-        <h1>My dapp</h1>
-        <p>ERC20 token dapp</p>
-        <label for="number"> Mint tokens </label>
+        <h1>Library dapp</h1>
+        <p>In this dapp you can add books to global library</p>
+        <label> Add book </label>
         </br>
-        <input type ="number" min=0 class="form-control" placeholder="Enter amount" id="mintToken">
-        <button class="btn btn-outline-primary" onclick = "mint()">Mint</button>
+        <div class="input-group mb-3">
+            <input id = "inputBookName" type="text" class="form-control" placeholder="name" aria-label="Username">
+            <span class="input-group-text"> </span>
+            <input id = "inputBookAuthor" type="text" class="form-control" placeholder="author" aria-label="Server">
+          </div>
+        <div class="input-group mb-3">
+            <input id = "inputBookYear" type="number" min="0" class="form-control" placeholder="year" aria-label="Username">
+            <span class="input-group-text"> </span>
+            <input id = "inputBookUrl" type="text" class="form-control" placeholder="url" aria-label="Server">
+        </div>  
+        
+        <button class="btn btn-outline-primary" onclick = "addBook()">Add book</button>
         </br>
-        <p>===========================</p>
-        <input type ="text" class="form-control" placeholder="0x0..." id="addressToTransfer">
-        <input type ="number" class="form-control" min=0 placeholder="Enter amount"  id="amountToTransfer">
-        <button class="btn btn-outline-primary" onclick = "transfer()">Transfer</button>
+        <p>All books in the library:</p>
+        <button class="btn btn-outline-primary" onclick = "displayBooks()">Display book</button>
+
+
         </br>
         <p>Check your balance</p>
         <button class="btn btn-outline-primary" onclick = "balanceOf()">BalanceOf</button>
@@ -54,10 +67,14 @@
     </div1>
 
     <script>
-        //Cntl+Shift+L
-        const ERC20Contract = "0x8Ae239895BeBCe406F0ec3A06d418bF93C28991B";
-        const ERC20ContractABI = [{"inputs":[{"internalType":"uint256","name":"_amount","type":"uint256"}],"stateMutability":"nonpayable","type":"constructor"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"spender","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Approval","type":"event"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"approve","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"burn","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"subtractedValue","type":"uint256"}],"name":"decreaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"spender","type":"address"},{"internalType":"uint256","name":"addedValue","type":"uint256"}],"name":"increaseAllowance","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},{"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transfer","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"Transfer","type":"event"},{"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"transferFrom","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"address","name":"owner","type":"address"},{"internalType":"address","name":"spender","type":"address"}],"name":"allowance","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"decimals","outputs":[{"internalType":"uint8","name":"","type":"uint8"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"name","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"symbol","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"totalSupply","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"}]
         
+        //Change UI
+        //Add books to library
+        //Return all books
+
+        //Cntl+Shift+L
+        const BookContract = "0xf3280778735C8b7339Cda0C49fa61F49a089885E";
+        const BookContractABI = [{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"name":"addBook","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"buyBook","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"books","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllBooks","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book[]","name":"_books","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"getBook","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book","name":"_book","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"getBookDetails","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"id","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"myBook","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book","name":"_book","type":"tuple"}],"stateMutability":"view","type":"function"}]
         let Contract;
         let signer;
         
@@ -70,8 +87,8 @@
                     provider.listAccounts().then((accounts) => {//have access to list of accounts
                         signer = provider.getSigner(accounts[0]);//access your connected account
                         Contract = new ethers.Contract(
-                            ERC20Contract,
-                            ERC20ContractABI,
+                            BookContract,
+                            BookContractABI,
                             signer
                         );//Create JS object of smart-contract existing on blockchain
                     });
@@ -82,14 +99,37 @@
             }
             if (signer){
                 //Make it work with real disconnect
-                provider = null;
-                signer = null;
+                //provider = null;
+                //signer = null;
                 console.log("signer", signer)
                 console.log("disconnect")
                 const walletStatus = document.getElementById("walletStatus");
                 walletStatus.innerText = "Connect Metamask"
+                await displayBooks();
             }
+            
 
+        }
+
+        async function addBook(){
+            const inputBookName = document.getElementById("inputBookName").value;
+            const inputBookAuthor = document.getElementById("inputBookAuthor").value;
+            const inputBookYear = document.getElementById("inputBookYear").value;
+            const inputBookUrl = document.getElementById("inputBookUrl").value;
+
+            const addBook = Contract.addBook(inputBookName, inputBookAuthor, inputBookYear, inputBookUrl)
+            await displayBooks();
+        }
+
+        async function displayBooks(){
+           const books = await Contract.getAllBooks()
+           console.log(books)
+
+           //Look into innerHTML to inject card div into Page
+
+        }
+        async function test(){
+            alert("testing onload")
         }
         
         async function mint(){
