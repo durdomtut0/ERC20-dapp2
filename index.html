@@ -17,7 +17,7 @@
     
 </head>
 
-<body onload="connectWallet()">
+<body>
       
 
     <nav class="navbar bg-body-tertiary">
@@ -56,105 +56,30 @@
         <button class="btn btn-outline-primary" onclick = "addBook()">Add book</button>
         </br>
         <p>All books in the library:</p>
-        <button class="btn btn-outline-primary" onclick = "displayBooks()">Display book</button>
+        <button class="btn btn-outline-primary" onclick = "displayBooks()">Display books</button>
 
-
-        </br>
-        <p>Check your balance</p>
-        <button class="btn btn-outline-primary" onclick = "balanceOf()">BalanceOf</button>
-        <p>Your balance is: <span id ="balanceOf"></p>
         
     </div1>
+    <div id ="booksRow" class ="row">
+        <!--Store books-->
+    </div>
+    <div id="bookTemplate" style="display: none;" >
+        <div class="col-sm-6 col-md-4 col-lg-3">
+            <div class="card" style="width: 18rem;">
+                <img alt="180x180" class="card-image img-rounded img-center" src ="">
+                <h5 class="card-title">Book Name</h5>
+                <p class="card-author">Author name</p>
+                <p class="card-id">id</p>
+                <a class="card-button btn btn-primary" onclick = "buyBook()">Buy Book</a>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        
-        //Change UI
-        //Add books to library
-        //Return all books
 
-        //Cntl+Shift+L
-        const BookContract = "0xf3280778735C8b7339Cda0C49fa61F49a089885E";
-        const BookContractABI = [{"inputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"name":"addBook","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"buyBook","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"books","outputs":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllBooks","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book[]","name":"_books","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"getBook","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book","name":"_book","type":"tuple"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_id","type":"uint256"}],"name":"getBookDetails","outputs":[{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"id","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"myBook","outputs":[{"components":[{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"string","name":"title","type":"string"},{"internalType":"string","name":"author","type":"string"},{"internalType":"uint256","name":"datePublished","type":"uint256"},{"internalType":"string","name":"url","type":"string"}],"internalType":"struct StructExample.Book","name":"_book","type":"tuple"}],"stateMutability":"view","type":"function"}]
-        let Contract;
-        let signer;
-        
-        async function connectWallet(){
-            if (!signer){
-                //Provider = RPC Node in a blockchain
-                const provider = new ethers.providers.Web3Provider(window.ethereum, 97);
-                // provider = https://indulgent-newest-leaf.bsc-testnet.discover.quiknode.pro/8a8483b20d028a2b4ca603f1f86a6f1d702a6624/
-                await provider.send("eth_requestAccounts", []).then(() => {//request accounts
-                    provider.listAccounts().then((accounts) => {//have access to list of accounts
-                        signer = provider.getSigner(accounts[0]);//access your connected account
-                        Contract = new ethers.Contract(
-                            BookContract,
-                            BookContractABI,
-                            signer
-                        );//Create JS object of smart-contract existing on blockchain
-                    });
-                });
-                const walletStatus = document.getElementById("walletStatus");
-                walletStatus.innerText = "disconect"
 
-            }
-            if (signer){
-                //Make it work with real disconnect
-                //provider = null;
-                //signer = null;
-                console.log("signer", signer)
-                console.log("disconnect")
-                const walletStatus = document.getElementById("walletStatus");
-                walletStatus.innerText = "Connect Metamask"
-                await displayBooks();
-            }
-            
 
-        }
-
-        async function addBook(){
-            const inputBookName = document.getElementById("inputBookName").value;
-            const inputBookAuthor = document.getElementById("inputBookAuthor").value;
-            const inputBookYear = document.getElementById("inputBookYear").value;
-            const inputBookUrl = document.getElementById("inputBookUrl").value;
-
-            const addBook = Contract.addBook(inputBookName, inputBookAuthor, inputBookYear, inputBookUrl)
-            await displayBooks();
-        }
-
-        async function displayBooks(){
-           const books = await Contract.getAllBooks()
-           console.log(books)
-
-           //Look into innerHTML to inject card div into Page
-
-        }
-        async function test(){
-            alert("testing onload")
-        }
-        
-        async function mint(){
-            const number = document.getElementById("mintToken").value
-            const store = Contract.mint(number)
-            await store;
-        }
-        async function transfer(){
-            const addressToTransfer = document.getElementById("addressToTransfer").value
-            let amountToTransfer = document.getElementById("amountToTransfer").value
-            //console.log(amountToTransfer);
-            const transfer = Contract.transfer(addressToTransfer, amountToTransfer)
-            await transfer;
-        }
-        async function balanceOf(){
-            let balance  = BigInt(await Contract.balanceOf(await signer.getAddress()));
-            const balanceOf = document.getElementById("balanceOf");
-            balanceOf.innerText = balance;
-
-            console.log(balance)
-        }
-        
-        //Improve interface, more user Friendly
-
-    </script>
+    <script src="script.js"></script>
+    
 
 </body>
 </html>
